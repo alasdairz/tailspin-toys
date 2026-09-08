@@ -48,7 +48,14 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Use the installed Google Chrome channel for local development only
+        // (e.g. Windows ARM64, where Playwright's bundled Chromium is an x64
+        // emulated build). CI runs inside Playwright's official Docker image,
+        // which only ships the bundled Chromium, so fall back to that there.
+        ...(process.env.CI ? {} : { channel: 'chrome' }),
+      },
     },
   ],
 
